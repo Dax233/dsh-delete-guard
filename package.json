@@ -1,0 +1,49 @@
+{
+  "name": "@local/dsh-delete-guard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reject any shell command where a destructive delete is sequenced, piped, nested or wrapped instead of being a standalone statement.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./index.js",
+  "engines": {
+    "dsh": "^0.2.1-rc.3"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "lib/detect.js",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "test": "node --test tests/detect.test.mjs"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "guard",
+    "delete",
+    "safety",
+    "powershell",
+    "sandbox"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dax233/dsh-delete-guard.git"
+  },
+  "homepage": "https://github.com/Dax233/dsh-delete-guard#readme",
+  "bugs": {
+    "url": "https://github.com/Dax233/dsh-delete-guard/issues"
+  }
+}

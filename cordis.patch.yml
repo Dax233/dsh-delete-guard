@@ -1,0 +1,12 @@
+# Loader layer for the delete guard.
+- insert:
+    - id: delete-guard
+      name: '@local/dsh-delete-guard'
+      config:
+        enabled: true
+        # Tool names whose command text is inspected before dispatch.
+        tools:
+          - pwsh
+          - bash
+          - shell
+          - terminal_send
