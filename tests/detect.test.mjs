@@ -76,3 +76,39 @@ test('command subcommands that delete are allowed as single statements', () => {
   assert.equal(a.issues.length, 0);
   assert.equal(analyzeCommand('git rm file.txt', 'pwsh').issues.length, 0);
 });
+test('interpreter wrappers that evaluate delete code are rejected', () => {
+  assert.ok(deny('python -c "os.remove(\'x\')"'));
+  assert.ok(deny('node -e "fs.rmSync(\'x\',{recursive:true})"'));
+  assert.ok(deny('node --eval "require(\'fs\').unlinkSync(\'x\')"'));
+  assert.ok(deny('node -p "require(\'fs\').rmSync(\'x\')"'));
+  assert.ok(deny('python3 -c "import shutil; shutil.rmtree(\'x\')"'));
+  assert.ok(deny('perl -e "unlink(\'x\')"'));
+  assert.ok(deny('ruby -e "File.delete(\'x\')"'));
+  assert.ok(deny('php -r "unlink(\'x\')"'));
+  assert.ok(deny('deno eval "Deno.remove(\'x\')"'));
+  assert.ok(deny('bun -e "require(\'fs\').unlinkSync(\'x\')"'));
+});
+test('interpreter wrappers without a delete pass', () => {
+  assert.ok(allow('node -e "console.log(1)"'));
+  assert.ok(allow('python -c "print(1)"'));
+  assert.ok(allow('python3 -c "import json; print(json.dumps({}))"'));
+  assert.ok(allow('node --version'));
+  assert.ok(allow('ruby -e "puts File.exist?(x)"'));
+  assert.ok(allow('node -e "console.log(\'rm -rf\')"'));
+  assert.ok(allow('echo "node -e fs.rmSync(x)"'));
+  assert.ok(allow('Write-Host "python -c os.remove(x)"'));
+});
+test('interpreter wrappers with extra flags are still detected', () => {
+  assert.ok(deny('python -u -c "os.remove(\'x\')"'));
+  assert.ok(deny('node --no-warnings -e "fs.rmSync(\'x\')"'));
+  assert.ok(allow('python -u -c "print(1)"'));
+});
+test('dotnet static delete is a single top-level statement when unrecombined', () => {
+  assert.ok(allow("[IO.File]::Delete('D:\\tmp\\a.txt')"));
+  assert.ok(allow("[System.IO.Directory]::Delete('D:\\tmp\\dir', $true)"));
+  assert.ok(deny("[IO.File]::Delete('a'); Get-Date"));
+  assert.ok(deny("[IO.File]::Delete('a') | Out-Null"));
+  assert.ok(deny('powershell -c "[IO.File]::Delete(\'a\')"'));
+  assert.ok(deny('iex "[IO.File]::Delete(\'a\')"'));
+  assert.ok(deny("[IO.File]::Delete((Join-Path $d 'a'))"));
+});

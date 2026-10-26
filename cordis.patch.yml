@@ -10,3 +10,11 @@
           - bash
           - shell
           - terminal_send
+        # Tool names whose code argument is inspected before dispatch
+        # (default: [run_code]). A filesystem delete call inside the code is
+        # rejected; the delete must be run as one standalone shell command.
+        # codeTools:
+        #   - run_code
+        # Escape hatch, off by default. true re-opens the run_code bypass that
+        # the code analysis exists to close; not recommended.
+        # allowRunCodeDeletes: false
